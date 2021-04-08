@@ -1,8 +1,5 @@
 {
   "profiles": {
-    "project": {
-      "commandName": "Project"
-    },
     "Docker": {
       "commandName": "Docker"
     }

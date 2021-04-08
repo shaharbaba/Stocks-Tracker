@@ -1,10 +1,16 @@
-FROM ubuntu:trusty AS base 
-WORKDIR /app
-RUN apt-get update; apt-get clean
+FROM ubuntu:trusty AS ubuntu-dotnet
+WORKDIR /install
+# Install dotnet
+RUN sudo apt-get install -y curl
+RUN curl -LJO https://dot.net/v1/dotnet-install.sh
+RUN chmod +x ./dotnet-install.sh
+RUN ./dotnet-install.sh --channel 5.0 
+RUN export PATH=/root/.dotnet:$PATH
 
-# Add a user for running applications.
-RUN useradd apps
-RUN mkdir -p /home/apps && chown apps:apps /home/apps
+
+FROM ubuntu-dotnet AS base 
+WORKDIR /
+RUN apt-get update; apt-get clean
 
 # Install x11vnc.
 RUN apt-get install -y x11vnc
@@ -29,7 +35,7 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN apt-get update && apt-get -y install google-chrome-stable
 
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM ubuntu-dotnet AS build
 WORKDIR /src
 COPY ["project/project.csproj", "project/"]
 RUN dotnet restore "project/project.csproj"

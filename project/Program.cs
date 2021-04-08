@@ -1,5 +1,4 @@
-﻿using HtmlAgilityPack;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
 
@@ -8,7 +7,6 @@ class Program
 {
     static void Main()  
     {
-
        string url = "https://finance.themarker.com/";
        string csspath = "#__next > div.ep.eq > main > div > div.fn.gd > div.gr > table > tbody > tr:nth-child(1)";
        Console.WriteLine("Starting...");

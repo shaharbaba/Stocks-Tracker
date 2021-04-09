@@ -1,34 +1,54 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using System;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Text;
 
-
-class Program
+public class Program
 {
-    static void Main()  
+    public void Main()
     {
-       string url = "https://finance.themarker.com/";
-       string csspath = "#__next > div.ep.eq > main > div > div.fn.gd > div.gr > table > tbody > tr:nth-child(1)";
-       Console.WriteLine("Starting...");
-       IWebDriver driver = new ChromeDriver();
-        GreenMessage("Succeeded");
-       driver.Navigate().GoToUrl(url);
-       IWebElement element = driver.FindElement(By.CssSelector(csspath));
-       Console.WriteLine(element.Text);
-        //driver.Quit();
+        string urlAddress = "https://finance.themarker.com/";
+        WriteMessage("Getting the data", ConsoleColor.Green);
+        string html = GetHtmlString(urlAddress);
+        if (html != null)
+        {
+            WriteMessage("Success!", ConsoleColor.Green);
+        }
+        else
+        {
+            WriteMessage("Fail", ConsoleColor.Red);
+        }
     }
 
-    public static void GreenMessage(string st)
-     {
-        Console.ForegroundColor = ConsoleColor.Green;
+    public string GetHtmlString(string url)
+    {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        string data = null;
+
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Stream receiveStream = response.GetResponseStream();
+            StreamReader readStream = null;
+
+            if (String.IsNullOrWhiteSpace(response.CharacterSet))
+                readStream = new StreamReader(receiveStream);
+            else
+                readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
+
+            data = readStream.ReadToEnd();
+
+            response.Close();
+            readStream.Close();
+        }
+
+        return data;
+    }
+    public static void WriteMessage(string st, ConsoleColor color = ConsoleColor.White)
+    {
+        Console.ForegroundColor = color;
         Console.WriteLine(st);
         Console.ForegroundColor = ConsoleColor.White;
-      }
-    public static void RedMessage(string st)
-    {
-       Console.ForegroundColor = ConsoleColor.Red;
-       Console.WriteLine(st);
-       Console.ForegroundColor = ConsoleColor.White;
     }
 }
 

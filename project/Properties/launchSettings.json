@@ -3,6 +3,10 @@
     "Docker": {
       "commandName": "Docker",
       "commandLineArgs": "project/project.csproj /t:ContainerBuild /p:Configuration=Release"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
     }
   }
 }

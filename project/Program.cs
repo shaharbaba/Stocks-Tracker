@@ -77,7 +77,7 @@ public class Program
                 Credentials = new NetworkCredential("Coinssummary@gmail.com", "Coins123456"),
                 EnableSsl = true,
             };
-            smtpClient.Send("Coinssummary@gmail.com", "shaharbaba12@gmail.com", "Coins Summary", summary);
+            //smtpClient.Send("Coinssummary@gmail.com", "shaharbaba12@gmail.com", "Coins Summary", summary);
         }
         else
         {

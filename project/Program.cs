@@ -16,32 +16,25 @@ public class Program
         HtmlDocument doc = new HtmlDocument();
         doc.LoadHtml(html);
 
-        HtmlNode Bitcoin_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[1]/td[4]/div");
-        HtmlNode Bitcoin_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[1]/td[5]/p");
+        HtmlNode Bitcoin_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[1]/td[4]/div/div");
+        HtmlNode Bitcoin_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[1]/td[4]/div/p");
 
-        HtmlNode Ethereum_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[2]/td[4]/div");
-        HtmlNode Ethereum_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[2]/td[5]/p");
+        HtmlNode Ethereum_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[2]/td[4]/div/div");
+        HtmlNode Ethereum_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[2]/td[4]/div/p");
 
-        HtmlNode Binance_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[3]/td[4]/div");
-        HtmlNode Binance_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[3]/td[5]/p");
+        HtmlNode Binance_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[3]/td[4]/div/div");
+        HtmlNode Binance_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[3]/td[4]/div/p");
 
-        HtmlNode Tether_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[5]/td[4]/div");
-        HtmlNode Tether_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[5]/td[5]/p");
+        HtmlNode Tether_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[4]/td[4]/div/div");
+        HtmlNode Tether_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[4]/td[4]/div/p");
 
-        HtmlNode Axie_Infiniy_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[26]/td[4]/div");
-        HtmlNode Axie_Infiniy_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[2]/div[2]/div[4]/table/tbody/tr[26]/td[5]/p");
+        HtmlNode Axie_Infiniy_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[28]/td[4]/div/div");
+        HtmlNode Axie_Infiniy_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[28]/td[4]/div/p");
 
 
         if (html != null)
         {
-            //WriteMessage("Success!", ConsoleColor.Green);
-            
-            
-            //var output = TelAviv35 != null ? TelAviv35.InnerText : "Error!!";
-            //if (output == "Error!!")
-            //    WriteMessage("Error!!");
-            //else
-            //Console.Write(TelAviv35.InnerText + ": ");
+
             Console.WriteLine("Hello,\nHere is your daily coins summary -");
             Console.WriteLine("Bitcoin: ");
             Console.WriteLine("Price: " + Bitcoin_price.InnerText );
@@ -61,7 +54,7 @@ public class Program
 
             Console.WriteLine("Axie Infiniy: ");
             Console.WriteLine("Price: " + Axie_Infiniy_price.InnerText );
-            Console.WriteLine("24h %: " + Axie_Infiniy_change.InnerText + "\n") ;
+            Console.WriteLine("24h %: " + Axie_Infiniy_change.InnerText + "\n");
             string summary =
             
                 "Hello,\nHere is your daily coins summary -\n" +
@@ -77,17 +70,14 @@ public class Program
                 Credentials = new NetworkCredential("Coinssummary@gmail.com", "Coins123456"),
                 EnableSsl = true,
             };
-            //smtpClient.Send("Coinssummary@gmail.com", "shaharbaba12@gmail.com", "Coins Summary", summary);
+            smtpClient.Send("Coinssummary@gmail.com", "shaharbaba12@gmail.com", "Coins Summary", summary);
         }
         else
         {
             WriteMessage("Fail", ConsoleColor.Red);
         }
     }
-    //public string FindSpecificWords(string html)
-    //{
 
-    //}
 
     public static string GetHtmlString(string url)
     {
@@ -120,4 +110,3 @@ public class Program
         Console.ForegroundColor = ConsoleColor.White;
     }
 }
-

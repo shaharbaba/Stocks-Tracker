@@ -4,93 +4,79 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using Newtonsoft.Json.Linq;  //Install-Package Newtonsoft.Json -Version 13.0.1
+using System.Linq;
 
 public class Program
 {
     public static void Main()
     {
-        string urlAddress = "https://crypto.com/price";
-        WriteMessage("Getting the data", ConsoleColor.Green);
-        string html = GetHtmlString(urlAddress);
-
-        HtmlDocument doc = new HtmlDocument();
-        doc.LoadHtml(html);
-
-        HtmlNode Bitcoin_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[1]/td[4]/div/div");
-        HtmlNode Bitcoin_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[1]/td[4]/div/p");
-
-        HtmlNode Ethereum_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[2]/td[4]/div/div");
-        HtmlNode Ethereum_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[2]/td[4]/div/p");
-
-        HtmlNode Binance_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[3]/td[4]/div/div");
-        HtmlNode Binance_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[3]/td[4]/div/p");
-
-        HtmlNode Tether_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[4]/td[4]/div/div");
-        HtmlNode Tether_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[4]/td[4]/div/p");
-
-        HtmlNode Axie_Infiniy_price = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[28]/td[4]/div/div");
-        HtmlNode Axie_Infiniy_change = doc.DocumentNode.SelectSingleNode("/html/body/div[1]/div[3]/div[2]/div/div[4]/table/tbody/tr[28]/td[4]/div/p");
-
-
-        if (html != null)
+        string[] coins = { "bitcoin","ethereum" };    // once you receiving names from the customer, you should receive array of string
+        Console.WriteLine("The prices are: ");
+        string pricesResult = GetPricesTemplate(coins);
+        if(pricesResult != null)
         {
+            sendMessage(pricesResult);
 
-            Console.WriteLine("Hello,\nHere is your daily coins summary -");
-            Console.WriteLine("Bitcoin: ");
-            Console.WriteLine("Price: " + Bitcoin_price.InnerText );
-            Console.WriteLine("24h %: " + Bitcoin_change.InnerText + "\n");
-
-            Console.WriteLine("Ethereum: ");
-            Console.WriteLine("Price: " + Ethereum_price.InnerText);
-            Console.WriteLine("24h %: " + Ethereum_change.InnerText + "\n");
-
-            Console.WriteLine("Binance Coin: ");
-            Console.WriteLine("Price: " + Binance_price.InnerText);
-            Console.WriteLine("24h %: " + Binance_change.InnerText + "\n");
-
-            Console.WriteLine("Tether: ");
-            Console.WriteLine("Price: " + Tether_price.InnerText );
-            Console.WriteLine("24h %: " + Tether_change.InnerText + "\n");
-
-            Console.WriteLine("Axie Infiniy: ");
-            Console.WriteLine("Price: " + Axie_Infiniy_price.InnerText );
-            Console.WriteLine("24h %: " + Axie_Infiniy_change.InnerText + "\n");
-            string summary =
-            
-                "Hello,\nHere is your daily coins summary -\n" +
-                    "Bitcoin: \n" + "Price: " + Bitcoin_price.InnerText + "\n24h %: " + Bitcoin_change.InnerText + "\n\n" +
-                    "Ethereum: \n" + "Price: " + Ethereum_price.InnerText + "\n24h %: " + Ethereum_change.InnerText + "\n\n" +
-                    "Binance Coin: \n" + "Price: " + Binance_price.InnerText + "\n24h %: " + Binance_change.InnerText + "\n\n" +
-                    "Tether: \n" + "Price: " + Tether_price.InnerText + "\n24h %: " + Tether_change.InnerText + "\n\n" +
-                    "Axie Infiniy: \n" + "Price: " + Axie_Infiniy_price.InnerText + "\n24h %: " + Axie_Infiniy_change.InnerText + "\n\n";
-            
-            var smtpClient = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential("Coinssummary@gmail.com", "Coins123456"),
-                EnableSsl = true,
-            };
-            smtpClient.Send("Coinssummary@gmail.com", "shaharbaba12@gmail.com", "Coins Summary", summary);
-        }
-        else
-        {
-            WriteMessage("Fail", ConsoleColor.Red);
-        }
+        }else
+            writeMessageOnConsole("Fail!", ConsoleColor.Red);
+        // Console.WriteLine(pricesResult);     // for testing, printing in the console
     }
 
-
-    public static string GetHtmlString(string url)
+    public static void sendMessage(string summary)
     {
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        var from = "Coinssummary@gmail.com";
+        var to = "shaharbaba12@gmail.com";
+        var subject = "Coins summary";
+        var body = summary;
+
+        var username = "Coinssummary@gmail.com"; // get from Mailtrap
+        string appPass = "vrjttszsndwpdeew"; // app password
+
+        var host = "smtp.gmail.com";
+        var port = 587;
+        try { 
+            using(SmtpClient client = new SmtpClient(host, port))
+            {
+                client.EnableSsl = true;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential(username, appPass);
+                MailMessage msg = new MailMessage();
+                msg.To.Add(to);
+                msg.From = new MailAddress(from);
+                msg.Subject = subject;
+                msg.Body = body;
+                client.Send(msg);
+            };
+        }
+        catch
+        {
+            Console.WriteLine("Fail");
+        }
+        Console.WriteLine("Email sent");
+    }
+
+    public static void writeMessageOnConsole(string str, ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(str);
+        Console.ForegroundColor = ConsoleColor.White;
+    }
+
+    public static string GetPricesTemplate(string[] coins)
+    {
+        string url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false"; // json of all coins
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);    // create http request
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         string data = null;
 
-        if (response.StatusCode == HttpStatusCode.OK)
+        if (response.StatusCode == HttpStatusCode.OK)   // checking if the response status is ok
         {
             Stream receiveStream = response.GetResponseStream();
             StreamReader readStream = null;
 
-            if (String.IsNullOrWhiteSpace(response.CharacterSet))
+            if (String.IsNullOrWhiteSpace(response.CharacterSet))   
                 readStream = new StreamReader(receiveStream);
             else
                 readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
@@ -100,13 +86,23 @@ public class Program
             response.Close();
             readStream.Close();
         }
+        else return null;  
 
-        return data;
+
+        if(data != null) {
+            string results = "";
+            var jArray = JArray.Parse(data);    // convert all data to json array
+            for (int i=0; i<coins.Length; i++)
+            {  
+                var result = new JArray(jArray.Where(r => r.Value<string>("id").Equals(coins[i])));    // looking for the desired value
+                results += coins[i] + " - " + result[0]["current_price"].Value<int>() + "$\n";          // build string will all coins prices
+            }
+            // Console.WriteLine(results);
+            return "These are the prices for the coins you chosen:\n\n" + results + "\nSee you next time!";
+        }
+        return null;
     }
-    public static void WriteMessage(string st, ConsoleColor color = ConsoleColor.White)
-    {
-        Console.ForegroundColor = color;
-        Console.WriteLine(st);
-        Console.ForegroundColor = ConsoleColor.White;
-    }
+
+
+   
 }

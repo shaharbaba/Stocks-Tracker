@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Net.Mail;
 using System.Text;
 using Newtonsoft.Json.Linq;  //Install-Package Newtonsoft.Json -Version 13.0.1
 using System.Linq;

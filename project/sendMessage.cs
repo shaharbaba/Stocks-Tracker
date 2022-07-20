@@ -2,10 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using Newtonsoft.Json.Linq;  //Install-Package Newtonsoft.Json -Version 13.0.1
-using System.Linq;
-using static project.details;
 
 
 
@@ -14,9 +10,8 @@ namespace project
     internal class sendMessage
     {
 
-        public static void sendMessageTemplate(string summary)
+        public static void sendMessageTemplate(string pricesResult, string from, string to, string subject, string username, string appPass, string host, int port)
         {
-            var body = summary;
             try
             {
                 using (SmtpClient client = new SmtpClient(host, port))
@@ -29,7 +24,7 @@ namespace project
                     msg.To.Add(to);
                     msg.From = new MailAddress(from);
                     msg.Subject = subject;
-                    msg.Body = body;
+                    msg.Body = pricesResult;
                     client.Send(msg);
                 };
             }
